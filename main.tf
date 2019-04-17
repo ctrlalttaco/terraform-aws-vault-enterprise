@@ -42,9 +42,11 @@ variable "ssm_parameter_vault_tls_cert_chain" {}
 variable "ssm_parameter_vault_tls_key" {}
 variable "consul_cluster_size" {}
 variable "vault_cluster_size" {}
+
 variable "availability_zones" {
   type = "list"
 }
+variable "vault_lb_cert_arn" {}
 
 #############
 # Providers #
@@ -101,6 +103,7 @@ module "vault" {
   cluster_name                         = "${var.environment}"
   cluster_size                         = "${var.vault_cluster_size}"
   instance_type                        = "m5.large"
+  availability_zones                   = ["${var.availability_zones}"]
   private_subnets                      = "${var.vault_private_subnet_ids}"
   consul_rejoin_tag_key                = "consul_server_cluster"
   consul_rejoin_tag_value              = "${var.environment}"
@@ -113,7 +116,7 @@ module "vault" {
   consul_zip                           = "consul_enterprise_premium-1.4.4.zip"
   vault_zip                            = "vault_enterprise_premium-1.0.3.zip"
   ssm_kms_key                          = "${var.ssm_kms_key}"
-  ssm_parameter_path                  = "${var.ssm_parameter_path}"
+  ssm_parameter_path                   = "${var.ssm_parameter_path}"
   ssm_parameter_gossip_encryption_key  = "${var.ssm_parameter_consul_gossip_encryption_key}"
   ssm_parameter_consul_client_tls_ca   = "${var.ssm_parameter_consul_client_tls_ca}"
   ssm_parameter_consul_client_tls_cert = "${var.ssm_parameter_consul_client_tls_cert}"
@@ -121,12 +124,13 @@ module "vault" {
   ssm_parameter_vault_tls_cert_chain   = "${var.ssm_parameter_vault_tls_cert_chain}"
   ssm_parameter_vault_tls_key          = "${var.ssm_parameter_vault_tls_key}"
   ssh_public_key                       = "${var.vault_ssh_public_key}"
+  lb_cert_arn                          = "${var.vault_lb_cert_arn}"
 }
 
 ###########
 # Outputs #
 ###########
 
-output "vault_ip_addresses" {
-  value = "${module.vault.ip_addresses}"
+output "vault_lb_dns_name" {
+  value = "${module.vault.lb_dns_name}"
 }
