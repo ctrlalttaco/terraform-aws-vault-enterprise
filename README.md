@@ -22,20 +22,43 @@ IAM Certificate ARN for Vault Application Load Balancer
 
 Consul gossip encryption key (16-byte random string, base64 encoded)
 
-Example:
+CLI Example:
 ```
 > gossip_key=$(openssl rand -base64 16)
 > aws ssm put-parameter --region "us-west-2" --name "/vault-demo/consul/gossip_encryption_key" --value "$gossip_key" --type "SecureString"
 ```
 
+Terraform Example:
+```
+resource "random_id" "consul_gossip_encryption_key" {
+  byte_length = 16
+}
+
+resource "aws_ssm_parameter" "consul_gossip_encryption_key" {
+  name   = "/vault-demo/consul/gossip_encryption_key"
+  type   = "SecureString"
+  value  = "${random_id.consul_gossip_encryption_key.b64_std}"
+  key_id = "${aws_kms_key.ssm.arn}"
+}
+```
+
 Consul server TLS CA chain (base64 encoded)
 
-Example:
+CLI Example:
 ```
 > encoded_pem=$(openssl enc -base64 -A -in ca.pem)
 > aws ssm put-parameter --region "us-west-2" --name "/vault-demo/consul/server_tls_ca" --value "$encoded_pem" --type "SecureString"
 ```
 
+Terraform Example:
+```
+resource "aws_ssm_parameter" "consul_server_tls_ca" {
+  name   = "/vault-demo/consul/server_tls_ca"
+  type   = "SecureString"
+  value  = "${base64encode(file("${path.module}/ca.pem"))}"
+  key_id = "${aws_kms_key.ssm.arn}"
+}
+```
 Consul server TLS certificate (base64 encoded)
 
 Consul server TLS key (base64 encoded)
