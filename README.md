@@ -25,7 +25,11 @@ Consul gossip encryption key (16-byte random string, base64 encoded)
 CLI Example:
 ```
 > gossip_key=$(openssl rand -base64 16)
-> aws ssm put-parameter --region "us-west-2" --name "/vault-demo/consul/gossip_encryption_key" --value "$gossip_key" --type "SecureString"
+> aws ssm put-parameter \
+  --region "us-west-2" \
+  --name "/vault-demo/consul/gossip_encryption_key" \
+  --value "$gossip_key" \
+  --type "SecureString"
 ```
 
 Terraform Example:
@@ -47,7 +51,11 @@ Consul server TLS CA chain (base64 encoded)
 CLI Example:
 ```
 > encoded_pem=$(openssl enc -base64 -A -in ca.pem)
-> aws ssm put-parameter --region "us-west-2" --name "/vault-demo/consul/server_tls_ca" --value "$encoded_pem" --type "SecureString"
+> aws ssm put-parameter \
+  --region "us-west-2" \
+  --name "/vault-demo/consul/server_tls_ca" \
+  --value "$encoded_pem" \
+  --type "SecureString"
 ```
 
 Terraform Example:
