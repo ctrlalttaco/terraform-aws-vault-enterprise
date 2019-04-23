@@ -24,11 +24,11 @@ Consul gossip encryption key (16-byte random string, base64 encoded)
 
 CLI Example:
 ```
-> gossip_key=$(openssl rand -base64 16)
+> GOSSIP_KEY=$(openssl rand -base64 16)
 > aws ssm put-parameter \
   --region "us-west-2" \
   --name "/vault-demo/consul/gossip_encryption_key" \
-  --value "$gossip_key" \
+  --value "$GOSSIP_KEY" \
   --type "SecureString"
 ```
 
@@ -50,11 +50,11 @@ Consul server TLS CA chain (base64 encoded)
 
 CLI Example:
 ```
-> encoded_pem=$(openssl enc -base64 -A -in ca.pem)
+> ENCODED_PEM=$(openssl enc -base64 -A -in ca.pem)
 > aws ssm put-parameter \
   --region "us-west-2" \
   --name "/vault-demo/consul/server_tls_ca" \
-  --value "$encoded_pem" \
+  --value "$ENCODED_PEM" \
   --type "SecureString"
 ```
 
