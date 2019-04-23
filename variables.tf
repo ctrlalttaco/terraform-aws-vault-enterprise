@@ -29,13 +29,19 @@ variable "ssm_kms_key_arn" {
 variable "ssm_parameter_path" {
   type        = "string"
   description = "Base path for SSM parameters"
+  default = "/vault-demo"
 }
 
 variable "ssm_parameter_consul_gossip_encryption_key" {
+  description = "16-byte base64 string used for Consul gossip encryption"
   type = "string"
+  default = "/vault-demo/consul/gossip_encryption_key"
 }
 
-variable "ssm_parameter_consul_acl_master_token" {}
+variable "ssm_parameter_consul_acl_master_token" {
+  type = "string"
+  default = "/vault-demo/consul/acl_master_token"
+}
 variable "ssm_parameter_consul_acl_agent_token" {}
 variable "ssm_parameter_consul_acl_app_token" {}
 variable "enable_consul_acl" {
@@ -87,18 +93,23 @@ variable "consul_cluster_tag_key" {
 
 variable "consul_cluster_tag_value" {
   type    = "string"
-  default = "test_vault_ha"
+  default = "vault_ent_demo"
 }
 
 variable "ssm_parameter_consul_server_tls_ca" {
+  description = "base64 encoded string, Consul server TLS CA chain"
   type = "string"
+  default = "/vault-demo/consul/server_tls_ca"
 }
 
 variable "ssm_parameter_consul_server_tls_cert" {
+  description = "base64 encoded string, Consul server TLS certificate"
   type = "string"
+  default = "/vault-demo/consul/server_tls_cert"
 }
 
 variable "ssm_parameter_consul_server_tls_key" {
+  description = ""
   type = "string"
 }
 
