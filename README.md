@@ -19,9 +19,22 @@ IAM Certificate ARN for Vault Application Load Balancer
 
 ### SSM parameters
 
+
 Consul gossip encryption key (16-byte random string, base64 encoded)
 
+Example:
+```
+> gossip_key=$(openssl rand -base64 16)
+> aws ssm put-parameter --region "us-west-2" --name "/vault-demo/consul/gossip_encryption_key" --value "$gossip_key" --type "SecureString"
+```
+
 Consul server TLS CA chain (base64 encoded)
+
+Example:
+```
+> encoded_pem=$(openssl enc -base64 -A -in ca.pem)
+> aws ssm put-parameter --region "us-west-2" --name "/vault-demo/consul/server_tls_ca" --value "$encoded_pem" --type "SecureString"
+```
 
 Consul server TLS certificate (base64 encoded)
 
