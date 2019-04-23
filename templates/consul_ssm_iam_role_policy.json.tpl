@@ -6,10 +6,11 @@
             "Action":[
                 "ssm:DescribeParameters",
                 "ssm:GetParameter",
-                "ssm:GetParameters"
+                "ssm:GetParameters",
+                "ssm:PutParameter"
             ],
             "Resource": [
-                "${ssm_parameter_arn}/*"
+                "${ssm_parameter_arn}/consul/*"
             ]
         }
     ]

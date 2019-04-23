@@ -100,6 +100,12 @@ seal "awskms" {
 }
 EOF
 
+  if [ -n "$ssm_parameter_consul_token" ]
+  then
+    local -r consul_token=$(get_ssm_parameter $AWS_REGION $ssm_parameter_consul_token)
+    sed -i "s/# token.*$/token = \"$consul_token\"/" "$CONFIG_PATH/config.hcl"
+  fi
+
   chmod 0640 "$CONFIG_PATH/config.hcl"
   chown vault:vault "$CONFIG_PATH/config.hcl"
 
@@ -149,6 +155,10 @@ do
     ;;
     --api-address)
     api_address="$2"
+    shift 2
+    ;;
+    --ssm-parameter-consul-token)
+    ssm_parameter_consul_token="$2"
     shift 2
     ;;
     --ssm-parameter-tls-cert-chain)

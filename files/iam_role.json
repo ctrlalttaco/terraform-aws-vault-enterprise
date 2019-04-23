@@ -1,6 +1,6 @@
 {
     "Version":"2008-10-17",
-   "Statement":[
+   "Statement": [
       {
          "Action":"sts:AssumeRole",
          "Principal":{

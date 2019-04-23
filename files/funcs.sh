@@ -40,11 +40,44 @@ create_user() {
   fi
 }
 
+ssm_parameter_exists() {
+  local -r region="$1"
+  local -r parameter="$2"
+
+  aws ssm get-parameter --region "$region" --name "$parameter" &> /dev/null
+  if [[ $? -eq 0 ]]
+  then
+    return 0
+  else
+    return 1
+  fi
+}
+
 get_ssm_parameter() {
   local -r func="get_ssm_parameter"
   local -r region="$1"
   local -r parameter="$2"
   
-  log "INFO" $func "Retrieving SSM parameter $parameter..."
-  aws --region "$region" ssm get-parameter --name "$parameter" --with-decryption | jq --raw-output '.Parameter.Value'
+  if $(ssm_parameter_exists $region $parameter)
+  then
+    log "INFO" $func "Retrieving SSM parameter $parameter..."
+    aws ssm get-parameter --region "$region" --name "$parameter" --with-decryption | jq --raw-output '.Parameter.Value'
+  else
+    log "ERROR" $func "SSM parameter $parameter does not exist, exiting..."
+  fi
+}
+
+put_ssm_parameter() {
+  local -r func="get_ssm_parameter"
+  local -r region="$1"
+  local -r parameter="$2"
+  local -r value="$3"
+  
+  if $(ssm_parameter_exists $region $parameter)
+  then
+    log "INFO" $func "SSM parameter $parameter already exists, doing nothing..."
+  else
+    log "INFO" $func "Creating SSM parameter $parameter..."
+    aws ssm put-parameter --region "$region" --name "$parameter" --value "$value" --type "SecureString"
+  fi
 }

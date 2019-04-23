@@ -9,7 +9,8 @@
                 "ssm:GetParameters"
             ],
             "Resource": [
-                "${ssm_parameter_arn}/*"
+                "${ssm_parameter_arn}/consul/*",
+                "${ssm_parameter_arn}/vault/*"
             ]
         }
     ]

@@ -1,5 +1,7 @@
 .terraform/
+artifacts/
 certs/
 *.pem
 *.tfstate
 *.tfstate.*
+*.tfvars

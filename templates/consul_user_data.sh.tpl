@@ -23,7 +23,7 @@ install_dependencies() {
   if [ -x "/usr/bin/yum" ]
   then
     uname -r | grep -q amzn2
-    if [ $? -eq 0 ]
+    if [[ $? -eq 0 ]]
     then
       local -r pkg_mgr="yum_amzn2"
     else
@@ -60,8 +60,8 @@ copy_artifacts() {
     mkdir $TMP_PATH
   fi
   log "INFO" "$func" "Copying scripts from S3..."
-  aws s3 cp "s3://${s3_bucket}/${s3_path}/install_consul.sh" "$TMP_PATH/install.sh"
-  chmod 0755 "$TMP_PATH/install.sh"
+  aws s3 cp "s3://${s3_bucket}/${s3_path}/install_consul.sh" "$TMP_PATH/install_consul.sh"
+  chmod 0755 "$TMP_PATH/install_consul.sh"
 
   aws s3 cp "s3://${s3_bucket}/${s3_path}/funcs.sh" "$TMP_PATH/funcs.sh"
   chmod 0755 "$TMP_PATH/funcs.sh"
@@ -71,15 +71,20 @@ copy_artifacts() {
 }
 
 
-opts="--server --bootstrap-expect ${bootstrap_expect} --rejoin-tag-key ${rejoin_tag_key} --rejoin-tag-value ${rejoin_tag_value} --ssm-parameter-gossip-encryption-key ${ssm_parameter_gossip_encryption_key} --ssm-parameter-tls-ca ${ssm_parameter_tls_ca} --ssm-parameter-tls-cert ${ssm_parameter_tls_cert} --ssm-parameter-tls-key ${ssm_parameter_tls_key}"
+opts="--server --bootstrap-expect ${bootstrap_expect} --rejoin-tag-key ${rejoin_tag_key} --rejoin-tag-value ${rejoin_tag_value} --ssm-parameter-gossip-encryption-key ${ssm_parameter_consul_gossip_encryption_key} --ssm-parameter-tls-ca ${ssm_parameter_consul_server_tls_ca} --ssm-parameter-tls-cert ${ssm_parameter_consul_server_tls_cert} --ssm-parameter-tls-key ${ssm_parameter_consul_server_tls_key}"
 
-if [ ${packerized} -eq 0 ]
+if [[ ${enable_consul_acl} -eq 1 ]]
+then
+  opts="--enable-acl --ssm-parameter-acl-master-token ${ssm_parameter_consul_acl_master_token} --ssm-parameter-acl-agent-token ${ssm_parameter_consul_acl_agent_token} --ssm-parameter-acl-app-token ${ssm_parameter_consul_acl_app_token} $opts"
+fi
+
+if [[ ${packerized} -eq 0 ]]
 then
   install_dependencies
   copy_artifacts
-  "$TMP_PATH/install.sh" --install --configure $opts
+  "$TMP_PATH/install_consul.sh" --install --configure $opts
 else
-  /opt/consul/scripts/install.sh --configure $opts
+  /opt/consul/scripts/install_consul.sh --configure $opts
 fi
 
 # ${install_script_hash}

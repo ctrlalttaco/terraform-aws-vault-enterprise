@@ -77,15 +77,21 @@ copy_artifacts() {
   aws s3 cp "s3://${s3_bucket}/${s3_path}/${vault_zip}" "$TMP_PATH/vault.zip"
 }
 
-consul_opts="--rejoin-tag-key ${rejoin_tag_key} --rejoin-tag-value ${rejoin_tag_value} --ssm-parameter-gossip-encryption-key ${ssm_parameter_gossip_encryption_key} --ssm-parameter-tls-ca ${ssm_parameter_consul_client_tls_ca} --ssm-parameter-tls-cert ${ssm_parameter_consul_client_tls_cert} --ssm-parameter-tls-key ${ssm_parameter_consul_client_tls_key}"
+consul_opts="--rejoin-tag-key ${consul_rejoin_tag_key} --rejoin-tag-value ${consul_rejoin_tag_value} --ssm-parameter-gossip-encryption-key ${ssm_parameter_consul_gossip_encryption_key} --ssm-parameter-tls-ca ${ssm_parameter_consul_client_tls_ca} --ssm-parameter-tls-cert ${ssm_parameter_consul_client_tls_cert} --ssm-parameter-tls-key ${ssm_parameter_consul_client_tls_key}"
 vault_opts="--ssm-parameter-tls-cert-chain ${ssm_parameter_vault_tls_cert_chain} --ssm-parameter-tls-key ${ssm_parameter_vault_tls_key} --unseal-kms-key-arn ${vault_unseal_kms_key_arn}"
 
-if [ ${vault_api_address} -ne 0]
+if [[ ${enable_consul_acl} -eq 1 ]]
+then
+  consul_opts="--enable-acl --ssm-parameter-acl-agent-token ${ssm_parameter_consul_acl_agent_token} $consul_opts"
+  vault_opts="--ssm-parameter-consul-token ${ssm_parameter_consul_acl_app_token} $vault_opts"
+fi
+
+if [[ ${vault_api_address} -ne 0 ]]
 then
   vault_opts="--api-address ${vault_api_address} $vault_opts"
 fi
 
-if [ ${packerized} -eq 0 ]
+if [[ ${packerized} -eq 0 ]]
 then
   install_dependencies
   copy_artifacts
