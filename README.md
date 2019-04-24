@@ -19,25 +19,96 @@ IAM Certificate ARN for Vault Application Load Balancer
 
 ### SSM parameters
 
+The following SSM parameter of type `SecureString` must be created:
 
-Consul gossip encryption key (16-byte random string, base64 encoded)
+* Consul gossip encryption key (16-byte random string, base64 encoded)
+* Consul server TLS CA chain (base64 encoded)
+* Consul server TLS certificate (base64 encoded)
+* Consul server TLS key (base64 encoded)
+* Consul client TLS CA chain (base64 encoded)
+* Consul client TLS certificate (base64 encoded)
+* Consul client TLS key (base64 encoded)
+* Vault server TLS certificate chain (base64 encoded)
+* Vault server TLS key (base64 encoded)
+
+Creating a Consul gossip encryption key
+
+CLI Example 1:
+```
+$ consul keygen
+
+2DY+rtvNmltTLhdTTSmwkQ==
+```
+
+CLI Example 2:
+```
+$ openssl rand -base64 16
+
+rD+h/UjWRCBQCnuYz3mxJQ==
+```
+
+Terraform Example:
+```
+# main.tf
+resource "random_id" "consul_gossip_encryption_key" {
+  byte_length = 16
+}
+
+output "consul_gossip_encryption_key" {
+  value = "${random_id.consul_gossip_encryption_key.b64_std}"
+}
+```
+
+```
+$ terraform init
+$ terraform apply -auto-approve
+
+Outputs:
+
+consul_gossip_encryption_key = ZsS+QLpWT6xbz3Ytv/zGrQ==
+```
+
+Base64 Encoding a TLS certificate or key
+
+CLI Example 1:
+```
+$ openssl enc -base64 -A -in ca.pem
+
+```
+
+CLI Example 2:
+```
+$ base64 ca.pem
+```
+
+Terraform Example:
+```
+# main.tf
+output "consul_server_tls_ca_base64" {
+  value = "${base64encode(file("${path.module}/ca.pem"))}"
+}
+
+$ terraform init
+$ terraform apply -auto-approve
+
+Outputs:
+
+consul_server_tls_ca_base64 = LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t....
+```
+
+Creating an SSM parameter
 
 CLI Example:
 ```
-> GOSSIP_KEY=$(openssl rand -base64 16)
-> aws ssm put-parameter \
+$ aws ssm put-parameter \
   --region "us-west-2" \
   --name "/vault-demo/consul/gossip_encryption_key" \
-  --value "$GOSSIP_KEY" \
+  --value "2DY+rtvNmltTLhdTTSmwkQ==" \
   --type "SecureString"
 ```
 
 Terraform Example:
 ```
-resource "random_id" "consul_gossip_encryption_key" {
-  byte_length = 16
-}
-
 resource "aws_ssm_parameter" "consul_gossip_encryption_key" {
   name   = "/vault-demo/consul/gossip_encryption_key"
   type   = "SecureString"
@@ -46,52 +117,17 @@ resource "aws_ssm_parameter" "consul_gossip_encryption_key" {
 }
 ```
 
-Consul server TLS CA chain (base64 encoded)
-
-CLI Example:
-```
-> ENCODED_PEM=$(openssl enc -base64 -A -in ca.pem)
-> aws ssm put-parameter \
-  --region "us-west-2" \
-  --name "/vault-demo/consul/server_tls_ca" \
-  --value "$ENCODED_PEM" \
-  --type "SecureString"
-```
-
-Terraform Example:
-```
-resource "aws_ssm_parameter" "consul_server_tls_ca" {
-  name   = "/vault-demo/consul/server_tls_ca"
-  type   = "SecureString"
-  value  = "${base64encode(file("${path.module}/ca.pem"))}"
-  key_id = "${aws_kms_key.ssm.arn}"
-}
-```
-Consul server TLS certificate (base64 encoded)
-
-Consul server TLS key (base64 encoded)
-
-Consul client TLS CA chain (base64 encoded)
-
-Consul client TLS certificate (base64 encoded)
-
-Consul client TLS key (base64 encoded)
-
-Vault server TLS certificate chain (base64 encoded)
-
-Vault server TLS key (base64 encoded)
-
 ## Inputs
 
 ### Common
 
 | Variable | Type | Description | Default Value |
 | -------- | ---- | ----------- | ------------- |
-| namespace | string |
-| environment | string |
-| region | string |
-| vpc_id | string |
-| ssm_kms_key_arn | string |
+| namespace | string | Resource name descriptor | team-demo |
+| environment | string | Resource environment tag | demo |
+| region | string | AWS Region | us-west-2 |
+| vpc_id | string | AWS VPC ID | |
+| ssm_kms_key_arn | string | AWS KMS key for SSM parameters | |
 
 ### SSM parameters
 
@@ -169,5 +205,14 @@ Vault server TLS key (base64 encoded)
 | vault_wait_for_capacity_timeout | string | Time in minutes to wait for changes in auto-scaling group capacity | 10m |
 | vault_enabled_metrics | string | True/Flase, Enable metrics for Vault auto-scaling group | true |
 | vault_termination_policies | string | Termination policy for determining which instance to terminate during scale-down | OldestInstance |
+
+Example subnet map variable definition:
+```
+consul_private_subnets = {
+  "subnet-09f9fa49b56fe8e39" = "us-west-2a"
+  "subnet-0c6830f9acf1cbac9" = "us-west-2b"
+  "subnet-0e2025c6531edd88d" = "us-west-2c"
+}
+```
 
 ## Outputs

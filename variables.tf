@@ -2,13 +2,13 @@
 variable "namespace" {
   type        = "string"
   description = "Resource naming identifier"
-  default     = "team-rocket"
+  default     = "team-demo"
 }
 
 variable "environment" {
   type        = "string"
   description = "Environment identification for resource tagging"
-  default     = "test"
+  default     = "demo"
 }
 
 variable "region" {
