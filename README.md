@@ -161,7 +161,7 @@ resource "aws_ssm_parameter" "consul_gossip_encryption_key" {
 | consul_private_subnets | map | Subnet IDs and associated Availability Zones | |
 | consul_cluster_tag_key | string | Tag key to use for Consul auto-join | consul_cluster_name |
 | consul_cluster_tag_value | string | Tag value to use for Consul auto-join | vault_ent_demo |
-| consul_asg_enabled_metrics | string | True/Flase, Enable metrics for Consul auto-scaling group | true |
+| consul_asg_enabled_metrics | list | List of metrics to enable for Consul auto-scaling group | [] |
 | consul_cluster_size_min | string | Integer, Consul cluster minimum size | 5 |
 | consul_cluster_size_max | string | Integer, Consul cluster maximum size | 7 |
 | consul_health_check_grace_period | string | Integer, Time in seconds, after instance comes into service before checking health | 300 |
@@ -203,7 +203,7 @@ resource "aws_ssm_parameter" "consul_gossip_encryption_key" {
 | vault_api_ingress_cidr_blocks | list | List of CIDR blocks to permit Vault API access | ["0.0.0.0/0"] |
 | vault_zip_path | string | Path to Vault binary zip file | |
 | vault_wait_for_capacity_timeout | string | Time in minutes to wait for changes in auto-scaling group capacity | 10m |
-| vault_enabled_metrics | string | True/Flase, Enable metrics for Vault auto-scaling group | true |
+| vault_enabled_metrics | list | List of metrics to enable for Vault auto-Scaling group | [] |
 | vault_termination_policies | string | Termination policy for determining which instance to terminate during scale-down | OldestInstance |
 
 Example subnet map variable definition:

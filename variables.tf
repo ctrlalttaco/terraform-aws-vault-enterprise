@@ -76,11 +76,6 @@ variable "consul_additional_security_groups" {
   default     = []
 }
 
-variable "consul_zip_path" {
-  type    = "string"
-  default = ""
-}
-
 variable "consul_private_subnets" {
   type        = "map"
   description = "Map of private subnet IDs and associated availability zones for Consul cluster"
@@ -320,11 +315,6 @@ variable "vault_api_ingress_cidr_blocks" {
 variable "vault_instance_type" {
   type    = "string"
   default = "m5.large"
-}
-
-variable "vault_zip_path" {
-  type    = "string"
-  default = ""
 }
 
 variable "vault_wait_for_capacity_timeout" {

@@ -37,16 +37,3 @@ resource "aws_s3_bucket_object" "install_vault" {
   etag   = "${filemd5("${path.module}/files/install_vault.sh")}"
 }
 
-resource "aws_s3_bucket_object" "consul_zip" {
-  bucket = "${aws_s3_bucket.object_bucket.id}"
-  key    = "artifacts/${basename(var.consul_zip_path)}"
-  source = "${var.consul_zip_path}"
-  etag   = "${filemd5(var.consul_zip_path)}"
-}
-
-resource "aws_s3_bucket_object" "vault_zip" {
-  bucket = "${aws_s3_bucket.object_bucket.id}"
-  key    = "artifacts/${basename(var.vault_zip_path)}"
-  source = "${var.vault_zip_path}"
-  etag   = "${filemd5(var.vault_zip_path)}"
-}
