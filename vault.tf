@@ -83,8 +83,6 @@ resource "aws_autoscaling_group" "vault_asg" {
     value               = "${var.environment}"
     propagate_at_launch = true
   }
-
-  depends_on = ["aws_s3_bucket_object.consul_zip", "aws_s3_bucket_object.vault_zip"]
 }
 
 resource "random_id" "vault_install_script" {
@@ -101,12 +99,11 @@ data "template_file" "vault_user_data" {
 
   vars {
     packerized                                 = "${var.vault_packerized}"
-    s3_bucket                                  = "${aws_s3_bucket.object_bucket.id}"
-    s3_path                                    = "artifacts"
-    consul_rejoin_tag_key                             = "${var.consul_cluster_tag_key}"
-    consul_rejoin_tag_value                           = "${var.consul_cluster_tag_value}"
-    consul_zip                                 = "${basename(var.consul_zip_path)}"
-    vault_zip                                  = "${basename(var.vault_zip_path)}"
+    s3_bucket                                  = "${var.s3_bucket}"
+    consul_rejoin_tag_key                      = "${var.consul_cluster_tag_key}"
+    consul_rejoin_tag_value                    = "${var.consul_cluster_tag_value}"
+    consul_zip                                 = "${var.consul_zip}"
+    vault_zip                                  = "${var.vault_zip}"
     enable_consul_acl                          = "${var.enable_consul_acl}"
     ssm_parameter_consul_gossip_encryption_key = "${var.ssm_parameter_consul_gossip_encryption_key}"
     ssm_parameter_consul_client_tls_ca         = "${var.ssm_parameter_consul_client_tls_ca}"

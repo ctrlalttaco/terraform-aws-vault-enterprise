@@ -78,8 +78,6 @@ resource "aws_autoscaling_group" "consul_asg" {
     value               = "${var.consul_cluster_tag_value}"
     propagate_at_launch = true
   }
-
-  depends_on = ["aws_s3_bucket_object.consul_zip"]
 }
 
 resource "random_id" "consul_install_script" {
@@ -96,12 +94,11 @@ data "template_file" "consul_user_data" {
 
   vars {
     packerized                                 = "${var.consul_packerized}"
-    s3_bucket                                  = "${aws_s3_bucket.object_bucket.id}"
-    s3_path                                    = "artifacts"
+    s3_bucket                                  = "${var.s3_bucket}"
     bootstrap_expect                           = "${var.consul_cluster_size_min}"
     rejoin_tag_key                             = "${var.consul_cluster_tag_key}"
     rejoin_tag_value                           = "${var.consul_cluster_tag_value}"
-    consul_zip                                 = "${basename(var.consul_zip_path)}"
+    consul_zip                                 = "${var.consul_zip}"
     enable_consul_acl                          = "${var.enable_consul_acl}"
     ssm_parameter_consul_gossip_encryption_key = "${var.ssm_parameter_consul_gossip_encryption_key}"
     ssm_parameter_consul_server_tls_ca         = "${var.ssm_parameter_consul_server_tls_ca}"

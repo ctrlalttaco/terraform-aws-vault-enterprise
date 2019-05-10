@@ -61,20 +61,20 @@ copy_artifacts() {
   fi
   log "INFO" "$func" "Copying scripts from S3..."
   
-  aws s3 cp "s3://${s3_bucket}/${s3_path}/install_consul.sh" "$TMP_PATH/install_consul.sh"
+  aws s3 cp "s3://${s3_bucket}/install_consul.sh" "$TMP_PATH/install_consul.sh"
   chmod 0755 "$TMP_PATH/install_consul.sh"
   
-  aws s3 cp "s3://${s3_bucket}/${s3_path}/install_vault.sh" "$TMP_PATH/install_vault.sh"
+  aws s3 cp "s3://${s3_bucket}/install_vault.sh" "$TMP_PATH/install_vault.sh"
   chmod 0755 "$TMP_PATH/install_vault.sh"
 
-  aws s3 cp "s3://${s3_bucket}/${s3_path}/funcs.sh" "$TMP_PATH/funcs.sh"
+  aws s3 cp "s3://${s3_bucket}/funcs.sh" "$TMP_PATH/funcs.sh"
   chmod 0644 "$TMP_PATH/funcs.sh"
 
   log "INFO" "$func" "Copying consul binary from S3..."
-  aws s3 cp "s3://${s3_bucket}/${s3_path}/${consul_zip}" "$TMP_PATH/consul.zip"
+  aws s3 cp "s3://${s3_bucket}/${consul_zip}" "$TMP_PATH/consul.zip"
 
   log "INFO" "$func" "Copying vault binary from S3..."
-  aws s3 cp "s3://${s3_bucket}/${s3_path}/${vault_zip}" "$TMP_PATH/vault.zip"
+  aws s3 cp "s3://${s3_bucket}/${vault_zip}" "$TMP_PATH/vault.zip"
 }
 
 consul_opts="--rejoin-tag-key ${consul_rejoin_tag_key} --rejoin-tag-value ${consul_rejoin_tag_value} --ssm-parameter-gossip-encryption-key ${ssm_parameter_consul_gossip_encryption_key} --ssm-parameter-tls-ca ${ssm_parameter_consul_client_tls_ca} --ssm-parameter-tls-cert ${ssm_parameter_consul_client_tls_cert} --ssm-parameter-tls-key ${ssm_parameter_consul_client_tls_key}"

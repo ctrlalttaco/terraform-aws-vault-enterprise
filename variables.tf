@@ -44,6 +44,11 @@ variable "ssm_parameter_consul_acl_master_token" {
 }
 variable "ssm_parameter_consul_acl_agent_token" {}
 variable "ssm_parameter_consul_acl_app_token" {}
+
+variable "s3_bucket" {
+  description = "S3 bucket for installation artifacts"
+}
+
 variable "enable_consul_acl" {
   default = true
 }
@@ -76,9 +81,9 @@ variable "consul_additional_security_groups" {
   default     = []
 }
 
-variable "consul_zip_path" {
+variable "consul_zip" {
   type    = "string"
-  default = ""
+  default = "consul-enterprise_1.5.0+prem_linux_amd64.zip"
 }
 
 variable "consul_private_subnets" {
@@ -322,9 +327,9 @@ variable "vault_instance_type" {
   default = "m5.large"
 }
 
-variable "vault_zip_path" {
+variable "vault_zip" {
   type    = "string"
-  default = ""
+  default = "vault-enterprise_1.1.2+prem_linux_amd64.zip"
 }
 
 variable "vault_wait_for_capacity_timeout" {
