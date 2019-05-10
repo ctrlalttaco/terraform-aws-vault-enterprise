@@ -279,7 +279,7 @@ data "template_file" "vault_s3_iam_role_policy" {
   template = "${file("${path.module}/templates/s3_iam_role_policy.json.tpl")}"
 
   vars {
-    s3_bucket_arn = "${aws_s3_bucket.object_bucket.arn}"
+    s3_bucket_arn = "${data.aws_s3_bucket.selected.arn}"
   }
 }
 
